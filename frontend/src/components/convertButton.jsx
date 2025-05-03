@@ -1,4 +1,4 @@
-import "./convertButton.css"
+import "./convertButton.css";
 
 const ConvertButton = ({ handleConvert }) => {
   return (
