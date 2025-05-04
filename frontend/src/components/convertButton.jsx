@@ -2,9 +2,7 @@ import "./convertButton.css";
 
 const ConvertButton = ({ handleConvert }) => {
   return (
-    <button className="convert-button" onClick={handleConvert}>
-      convert
-    </button>
+    <button className="convert-button" onClick={handleConvert}>convert</button>
   );
 };
 

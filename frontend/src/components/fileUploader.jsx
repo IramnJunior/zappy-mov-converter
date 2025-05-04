@@ -1,6 +1,5 @@
 import { useState } from "react";
 import ConvertButton from "./convertButton";
-import { ConvertVideo } from "../../wailsjs/go/main/App";
 import "./fileUploader.css";
 
 function FileUploader() {
@@ -17,23 +16,15 @@ function FileUploader() {
       return;
     }
 
-    const reader = new FileReader();
-    reader.onload = (event) => {
-      const arrayBuffer = event.target.result;
-      const uint8Array = new Uint8Array(arrayBuffer);
-
-      ConvertVideo(Array.from(uint8Array), files[0].name)
-        .then((result) => {
-          console.log("Arquivo salvo em: ", result);
-          alert("Conversão concluída! Arquivo salvo em: " + result);
-        })
-        .catch((err) => {
-          console.error("Erro: ", err);
-          alert("Erro durante a conversão. Veja o console.");
-        });
-    };
-
-    reader.readAsArrayBuffer(files[0]);
+    const filePath = files[0].path;
+    alert(filePath)
+    // ConvertVideo(filePath)
+    //   .then((result) => {
+    //     alert("Arquivo convertido com sucesso!");
+    //   })
+    //   .catch((err) => {
+    //     alert("Erro ao converter arquivo");
+    //   });
   };
 
   return (
