@@ -3,16 +3,19 @@ package main
 import (
 	"fmt"
 	"github.com/wailsapp/wails/v3/pkg/application"
+	"os/exec"
 )
 
-type ConvertService struct{}
+type ConvertService struct {
+	paths []string
+}
 
 func (c *ConvertService) UploadFile() ([]string, error) {
 	dialogOptions := application.OpenFileDialogOptions{
-		Title: "Select Image",
+		Title: "Select Video(s)",
 		Filters: []application.FileFilter{
 			{
-				DisplayName: "Videos (*.mov)",
+				DisplayName: "Video (*.mov)",
 				Pattern:     "*.mov",
 			},
 		},
@@ -23,26 +26,41 @@ func (c *ConvertService) UploadFile() ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("erro ao fazer upload de arquivos: %v", err)
 	}
+	c.paths = paths
 
 	return paths, nil
 }
 
 func (c *ConvertService) ConvertVideo() (string, error) {
-	options := application.SaveFileDialogOptions{
-		Title:     "Save Your Video",
-		Directory: "/home/ivan/",
-		Filters: []application.FileFilter{
-			{
-				DisplayName: "Video (*.mp4)",
-				Pattern:     "*.mp4",
-			},
-		},
-	}
-	dialog := application.SaveFileDialogWithOptions(&options)
-
-	if path, err := dialog.PromptForSingleSelection(); err == nil {
-		return path, nil
+	options := application.OpenFileDialogOptions{
+		Title:                "select the folder you want to save",
+		CanChooseDirectories: true,
+		CanChooseFiles:       false,
 	}
 
-	return "", nil
+	dialog := application.OpenFileDialogWithOptions(&options)
+
+	savePath, err := dialog.PromptForSingleSelection()
+	if err != nil {
+		fmt.Println(err)
+		return "", err
+	}
+	fmt.Println(savePath)
+
+	for _, video := range c.paths {
+		cmd := exec.Command(
+			"ffmpeg", "-i", video,
+			"-c:v", "libx264",
+			"-c:a", "aac",
+			"-preset", "ultrafast",
+			savePath+"/video.mp4",
+		)
+
+		err := cmd.Run()
+		if err != nil {
+			fmt.Println(err)
+			return "", fmt.Errorf("erro: %v", err)
+		}
+	}
+	return "Sucesso!", nil
 }
