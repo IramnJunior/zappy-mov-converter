@@ -1,13 +1,24 @@
 import { useState } from "react";
 import ConvertButton from "./convertButton";
+import {
+  UploadFile,
+  ConvertVideo,
+} from "../../bindings/services/convertservice";
 import "./fileUploader.css";
 
 function FileUploader() {
-  const [files, setFiles] = useState([]);
+  const [files, setFiles] = useState([""]);
 
   const handleFileChange = (e) => {
-    const uploadedFiles = e.target.files;
-    setFiles([...uploadedFiles]);
+    UploadFile()
+      .then((result) => {
+        if (result.length > 0) {
+          setFiles(result)
+        }
+      })
+      .catch((err) => {
+        alert("error: ", err);
+      });
   };
 
   const handleConvert = () => {
@@ -16,15 +27,13 @@ function FileUploader() {
       return;
     }
 
-    const filePath = files[0].path;
-    alert(filePath)
-    // ConvertVideo(filePath)
-    //   .then((result) => {
-    //     alert("Arquivo convertido com sucesso!");
-    //   })
-    //   .catch((err) => {
-    //     alert("Erro ao converter arquivo");
-    //   });
+    ConvertVideo()
+      .then((result) => {
+        alert(result);
+      })
+      .catch((err) => {
+        alert("error: ", err);
+      });
   };
 
   return (
@@ -33,9 +42,9 @@ function FileUploader() {
         <input
           className="input"
           name="file"
-          type="file"
+          type="button"
           multiple
-          onChange={handleFileChange}
+          onClick={handleFileChange}
         />
         <svg
           xmlns="http://www.w3.org/2000/svg"
@@ -58,7 +67,7 @@ function FileUploader() {
 
       <ul>
         {files.map((file) => (
-          <li key={file.name}>{file.name}</li>
+          <li key={file}>{file}</li>
         ))}
       </ul>
 
