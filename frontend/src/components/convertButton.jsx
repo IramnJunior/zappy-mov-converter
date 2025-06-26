@@ -1,8 +1,10 @@
 import "./convertButton.css";
 
-const ConvertButton = ({ handleConvert }) => {
+const ConvertButton = ({ onClick }) => {
   return (
-    <button className="convert-button" onClick={handleConvert}>convert</button>
+    <button className="convert-button" onClick={onClick}>
+      convert
+    </button>
   );
 };
 
